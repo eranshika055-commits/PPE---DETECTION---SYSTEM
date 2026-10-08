@@ -1,4 +1,29 @@
 // ==========================================
+// SAFE JSON RESPONSE HANDLER
+// ==========================================
+
+async function getJSONResponse(response) {
+
+    const responseText = await response.text();
+
+    if (!responseText) {
+        throw new Error(
+            `Server returned an empty response. HTTP Status: ${response.status}`
+        );
+    }
+
+    try {
+
+        return JSON.parse(responseText);
+
+    } catch (parseError) {
+
+        throw new Error(
+            `Server returned an invalid response. HTTP Status: ${response.status}. Response: ${responseText}`
+        );
+
+    }
+}// ==========================================
 // NAVIGATION
 // ==========================================
 
@@ -128,7 +153,7 @@ function setupImageDetection() {
                 }
             );
 
-            const data = await response.json();
+            const data = await getJSONResponse(response); 
 
             if (!response.ok || !data.success) {
 
@@ -417,7 +442,7 @@ function setupVideoDetection() {
                     );
 
                 const data =
-                    await response.json();
+                    await getJSONResponse(response);
 
                 if (
                     !response.ok ||
